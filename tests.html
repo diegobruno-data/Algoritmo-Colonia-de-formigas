@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Testes de validação — Colônia de Formigas</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <h1>Testes de validação</h1>
+      <p>Seção 6 do enunciado, executada agora no seu navegador com o mesmo código do simulador.</p>
+    </div>
+    <nav class="toplinks"><a href="index.html">Voltar ao simulador</a></nav>
+  </header>
+  <main class="tests-wrap">
+    <p id="summary" class="status" role="status">Executando…</p>
+    <div id="results"></div>
+  </main>
+  <script src="js/aco.js"></script>
+  <script src="js/tests.js"></script>
+  <script>
+    (function () {
+      var results = ACOTests.runAll();
+      var box = document.getElementById('results');
+      var failed = 0;
+      results.forEach(function (t) {
+        if (!t.pass) failed++;
+        var card = document.createElement('article');
+        card.className = 'card';
+        var bad = t.checks.filter(function (c) { return !c.pass; });
+        var html = '<div class="cardhead"><h2>Teste ' + t.id + ' — ' + t.title + '</h2>' +
+          '<span class="' + (t.pass ? 't-pass' : 't-fail') + '">' + (t.pass ? 'passou' : 'falhou') + ' (' + (t.checks.length - bad.length) + '/' + t.checks.length + ')</span></div>';
+        html += '<p><strong>Entradas e parâmetros</strong></p><ul>' + t.inputs.map(function (l) { return '<li>' + esc(l) + '</li>'; }).join('') + '</ul>';
+        html += '<details open><summary>Saídas obtidas</summary><pre>' + esc(t.outputs.join('\n')) + '</pre></details>';
+        if (bad.length) html += '<p class="t-fail">Verificações com falha: ' + bad.map(function (c) { return esc(c.label); }).join('; ') + '</p>';
+        html += '<p><strong>Conclusão.</strong> ' + esc(t.conclusion) + '</p>';
+        card.innerHTML = html;
+        box.appendChild(card);
+      });
+      document.getElementById('summary').textContent = failed ? failed + ' teste(s) com falha.' : 'Todos os ' + results.length + ' grupos de testes passaram.';
+      function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+    })();
+  </script>
+</body>
+</html>
